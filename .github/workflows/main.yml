@@ -47,6 +47,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Configurar o kubectl
+      #Comentado uso do eks config devido a ter deletado o cluster na AWS para evitar aumento do custo que ultrapassou $ 6,00
+      #  run: aws eks update-kubeconfig --name aula-k8s
         run: echo "Executando o comando aws eks update-kubeconfig"
+
       - name: Deploy dos Manifestos do Kubernets
         run: echo "Executando o comando bubectl apply"
