@@ -20,21 +20,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
         
-      #- name: Construção e Envio da Imagem Docker - Build and push
-      #  uses: docker/build-push-action@v6
-      #  with:
-      #    context: ./src
-      #    push: true
-      #    file: ./src/Dockerfile
-      #    tags: | 
-      #      maiconandreis/fake-shop:latest
-      #      maiconandreis/fake-shop:v${{ github.run_number }}
+      - name: Construção e Envio da Imagem Docker - Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src
+          push: true
+          file: ./src/Dockerfile
+          tags: | 
+            maiconandreis/fake-shop:latest
+            maiconandreis/fake-shop:v${{ github.run_number }}
 
   
   #Contrução Pepeline - CD
   cd:
     runs-on: ubuntu-latest
     needs: [ci]
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
     steps:
       - name: Obtendo Código do Projeto
         uses: actions/checkout@v4
@@ -52,4 +56,12 @@ jobs:
         run: echo "Executando o comando aws eks update-kubeconfig"
 
       - name: Deploy dos Manifestos do Kubernets
+      #Comentado uso do manifesto de deployment devido a ter deletado o cluster na AWS para evitar aumento do custo que ultrapassou $ 6,00
+        #uses: Azure/k8s-deploy@v5
+        #with:          
+        #  manifests: |
+        #      ./k8s/deployment.yaml
+        #  images: |
+        #      maiconandreis/fake-shop:v${{ github.run_number }}
+
         run: echo "Executando o comando bubectl apply"
